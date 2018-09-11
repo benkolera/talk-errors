@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Errors Package</title>
+<meta name="author" content="(Ben Kolera)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="./reveal.js/css/reveal.css"/>
+
+<link rel="stylesheet" href="./reveal.js/css/theme/sky.css" id="theme"/>
+
+<link rel="stylesheet" href="custom.css"/>
+<link rel="stylesheet" href="./reveal.js/lib/css/zenburn.css"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = './reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide" data-background="./images/computersaysno.jpg"><div class='title'><h1>Errors Package</h1><h2>Ben Kolera</h2></div>
+</section>
+
+<section>
+<section id="slide-org2e6d4d5">
+<h2 id="org2e6d4d5">Intro</h2>
+<p>
+(Note: speaker notes are accessible by pressing "s" or reading the org file directly)
+</p>
+</section>
+<section id="slide-org36a2703">
+<h3 id="org36a2703">Partial Functions</h3>
+<p>
+We deal with them all of the time. We want to encode partiality in the types
+with as much info as possible!
+</p>
+
+<p class="fragment (appear)">
+With Maybes and Eithers and what not.
+</p>
+</section>
+<section id="slide-org5bef824">
+<h3 id="org5bef824">The Errors Package</h3>
+<p>
+Outputs Safe and a bunch of useful helpers.
+</p>
+</section>
+<section id="slide-org07bff20">
+<h3 id="org07bff20">Lets Quickly Scan Through Them!</h3>
+</section>
+</section>
+<section>
+<section id="slide-orgf68e348">
+<h2 id="orgf68e348">Safe</h2>
+<div class="outline-text-2" id="text-orgf68e348">
+</div>
+</section>
+<section id="slide-org26f8d01">
+<h3 id="org26f8d01">Maybe Functions</h3>
+<p>
+(These are subsumed by lens)
+</p>
+<dl>
+<dt class="fragment appear">headMay</dt><dd class="fragment appear">[a] -&gt; Maybe a</dd>
+<dt class="fragment appear">tailMay</dt><dd class="fragment appear">[a] -&gt; Maybe [a]</dd>
+<dt class="fragment appear">atMay  </dt><dd class="fragment appear">[a] -&gt; Int -&gt; Maybe a</dd>
+<dt class="fragment appear">readMay</dt><dd class="fragment appear">Read a =&gt; String -&gt; Maybe a</dd>
+<dt class="fragment appear">etc</dt><dd class="fragment appear"></dd>
+
+</dl>
+</section>
+<section id="slide-org372d682">
+<h3 id="org372d682">Either Functions</h3>
+<dl>
+<dt class="fragment appear">headErr</dt><dd class="fragment appear">e -&gt; [a] -&gt; Either e a</dd>
+<dt class="fragment appear">tailErr</dt><dd class="fragment appear">e -&gt; [a] -&gt; Either e [a]</dd>
+<dt class="fragment appear">atErr  </dt><dd class="fragment appear">e -&gt; [a] -&gt; Int -&gt; Either e a</dd>
+<dt class="fragment appear">readErr</dt><dd class="fragment appear">Read a =&gt; e -&gt; String -&gt; Either e a</dd>
+<dt class="fragment appear">etc</dt><dd class="fragment appear"></dd>
+
+</dl>
+</section>
+<section id="slide-orgf6883d9">
+<h3 id="orgf6883d9">ExceptT Functions</h3>
+<dl>
+<dt class="fragment appear">tryHead</dt><dd class="fragment appear">Monad m =&gt; e -&gt; [a] -&gt; ExceptT e m a</dd>
+<dt class="fragment appear">tryTail</dt><dd class="fragment appear">Monad m =&gt; e -&gt; [a] -&gt; ExceptT e m [a]</dd>
+<dt class="fragment appear">tryAt  </dt><dd class="fragment appear">Monad m =&gt; e -&gt; [a] -&gt; Int -&gt; ExceptT e m a</dd>
+<dt class="fragment appear">readErr</dt><dd class="fragment appear">(Monad m, Read a) =&gt; e -&gt; String -&gt; ExceptT e m a</dd>
+<dt class="fragment appear">etc</dt><dd class="fragment appear"></dd>
+
+</dl>
+</section>
+</section>
+<section>
+<section id="slide-org1a3efdd">
+<h2 id="org1a3efdd">Utils</h2>
+<div class="outline-text-2" id="text-org1a3efdd">
+</div>
+</section>
+<section id="slide-orgbfe4001">
+<h3 id="orgbfe4001">ToMaybe</h3>
+<dl>
+<dt class="fragment appear">hush</dt><dd class="fragment appear">Either e a -&gt; Maybe a</dd>
+<dt class="fragment appear">hushT</dt><dd class="fragment appear">Monad m =&gt; ExceptT e m a -&gt; MaybeT m a</dd>
+<dt class="fragment appear">hoistMaybe</dt><dd class="fragment appear">Monad m =&gt; Maybe a -&gt; MaybeT m a</dd>
+
+</dl>
+</section>
+<section id="slide-orge66a180">
+<h3 id="orge66a180">ToEither</h3>
+<dl>
+<dt class="fragment appear">note</dt><dd class="fragment appear">e -&gt; Maybe a -&gt; Either e a</dd>
+<dt class="fragment appear">noteT</dt><dd class="fragment appear">Monad m =&gt; MaybeT m a -&gt; EitherT e m a</dd>
+<dt class="fragment appear">hoistEither</dt><dd class="fragment appear">Monad m =&gt; Either e a -&gt; ExceptT e m a</dd>
+<dt class="fragment appear">failWith</dt><dd class="fragment appear">Applicative m =&gt; e -&gt; Maybe a -&gt; ExceptT e m a</dd>
+<dt class="fragment appear">etc</dt><dd class="fragment appear"></dd>
+
+</dl>
+</section>
+<section id="slide-org45aae2e">
+<h3 id="org45aae2e">Exceptions</h3>
+<dl>
+<dt class="fragment appear">tryIO</dt><dd class="fragment appear">MonadIO m =&gt; IO a -&gt; ExceptT IOException m a</dd>
+<dt class="fragment appear">syncIO</dt><dd class="fragment appear">MonadIO m =&gt; IO a -&gt; ExceptT SomeException m a</dd>
+
+</dl>
+</section>
+</section>
+<section>
+<section id="slide-org86f2ee0">
+<h2 id="org86f2ee0">Script</h2>
+<p>
+This is handy for little scripts where text errors are ok.
+</p>
+<div class="org-src-container">
+
+<pre><code class="haskell" >import Control.Error
+
+main = runScript $ do
+    str <- scriptIO getLine
+    n   <- tryRead "Read failed" str
+    scriptIO $ print (n + 1)
+</code></pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgc32983b">
+<h2 id="orgc32983b">Conclusion</h2>
+<div class="outline-text-2" id="text-orgc32983b">
+</div>
+</section>
+<section id="slide-org4863171">
+<h3 id="org4863171">A lot of this is subsumed by lens</h3>
+</section>
+<section id="slide-org3b1846c">
+<h3 id="org3b1846c">Some of it is useful even with lens</h3>
+</section>
+<section id="slide-orga131dc3">
+<h3 id="orga131dc3">But it is still a good option if you aren't ready for lens yet</h3>
+</section>
+</section>
+<section>
+<section id="slide-org4f3313e">
+<h2 id="org4f3313e">Thanks!</h2>
+<p>
+<a href="https://errors.benkolera.com">https://errors.benkolera.com</a>
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="./reveal.js/lib/js/head.min.js"></script>
+<script src="./reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: false,
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: './reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: './reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>

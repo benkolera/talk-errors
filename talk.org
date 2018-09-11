@@ -1,0 +1,78 @@
+#+OPTIONS: num:nil toc:nil reveal_slide_number:nil
+#+REVEAL_TRANS: default
+#+REVEAL_THEME: sky
+#+Title: Errors Package
+#+Author: Ben Kolera
+#+Email: @benkolera
+#+REVEAL_ROOT: ./reveal.js/
+#+REVEAL_TITLE_SLIDE_BACKGROUND:./images/computersaysno.jpg
+#+REVEAL_PLUGINS: (highlight notes)
+#+REVEAL_EXTRA_CSS:custom.css
+
+* Intro
+ (Note: speaker notes are accessible by pressing "s" or reading the org file directly)
+** Partial Functions
+   We deal with them all of the time. We want to encode partiality in the types
+   with as much info as possible!
+
+   #+ATTR_REVEAL: :frag (appear)
+   With Maybes and Eithers and what not.
+** The Errors Package
+   Outputs Safe and a bunch of useful helpers.
+** Lets Quickly Scan Through Them!
+* Safe
+** Maybe Functions
+   (These are subsumed by lens)
+   #+ATTR_REVEAL: :frag (appear)
+   - headMay :: [a] -> Maybe a
+   - tailMay :: [a] -> Maybe [a]
+   - atMay   :: [a] -> Int -> Maybe a
+   - readMay :: Read a => String -> Maybe a
+   - etc ::
+** Either Functions
+   #+ATTR_REVEAL: :frag (appear)
+   - headErr :: e -> [a] -> Either e a
+   - tailErr :: e -> [a] -> Either e [a]
+   - atErr   :: e -> [a] -> Int -> Either e a
+   - readErr :: Read a => e -> String -> Either e a
+   - etc ::
+** ExceptT Functions
+   #+ATTR_REVEAL: :frag (appear)
+   - tryHead :: Monad m => e -> [a] -> ExceptT e m a
+   - tryTail :: Monad m => e -> [a] -> ExceptT e m [a]
+   - tryAt   :: Monad m => e -> [a] -> Int -> ExceptT e m a
+   - readErr :: (Monad m, Read a) => e -> String -> ExceptT e m a
+   - etc ::
+* Utils
+** ToMaybe
+   #+ATTR_REVEAL: :frag (appear)
+   - hush :: Either e a -> Maybe a
+   - hushT :: Monad m => ExceptT e m a -> MaybeT m a
+   - hoistMaybe :: Monad m => Maybe a -> MaybeT m a
+** ToEither
+   #+ATTR_REVEAL: :frag (appear)
+   - note :: e -> Maybe a -> Either e a
+   - noteT :: Monad m => MaybeT m a -> EitherT e m a
+   - hoistEither :: Monad m => Either e a -> ExceptT e m a
+   - failWith :: Applicative m => e -> Maybe a -> ExceptT e m a
+   - etc ::
+** Exceptions
+   #+ATTR_REVEAL: :frag (appear)
+   - tryIO :: MonadIO m => IO a -> ExceptT IOException m a
+   - syncIO :: MonadIO m => IO a -> ExceptT SomeException m a
+* Script
+  This is handy for little scripts where text errors are ok.
+  #+BEGIN_SRC haskell
+import Control.Error
+
+main = runScript $ do
+    str <- scriptIO getLine
+    n   <- tryRead "Read failed" str
+    scriptIO $ print (n + 1)
+  #+END_SRC
+* Conclusion
+** A lot of this is subsumed by lens
+** Some of it is useful even with lens
+** But it is still a good option if you aren't ready for lens yet
+* Thanks!
+  https://errors.benkolera.com
